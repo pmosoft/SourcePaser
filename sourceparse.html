@@ -1,0 +1,91 @@
+<html>
+<head>
+<title>parse</title>
+<script>
+function parseCheck() {
+
+    var sqlText = document.getElementById("sql").value;
+       
+    //sqlText = "SELECT CLNN FROM RBAADM.RMKMB0004 a,RBAADM.RMKMB0003 b,RBAADM.RMKMB0003 c; /* aaaa */";
+    //alert("sqlText="+sqlText);
+    
+    //---------------------
+    // Define Reg
+    //---------------------
+    
+    //var lineComment1 = /--.*/;
+    var lineComment1 = new RegExp("--.*");
+    var lineComment2 = new RegExp("//.*");
+    var whitespace = new RegExp("[\t\n]");
+    //var longComment = new RegExp("/\*([^*]|\*+[^/*])*\*+/");
+    var longComment = /\/\*([^*]|\*+[^/*])*\*+\//;
+    
+    //var extTable01 = new RegExp("[a-zA-Z]{5}[0-9]{4}");
+    var extTable01 = /[a-zA-Z]{5}[0-9]{4}/g; //ex:RMKME0006
+    var extTable02 = /CV?_[a-zA-Z]?[a-zA-Z]?[a-zA-Z]?[a-zA-Z]?[a-zA-Z]?[a-zA-Z]?[a-zA-Z]?[a-zA-Z]?[a-zA-Z]?[a-zA-Z]?[a-zA-Z]?[a-zA-Z]?[a-zA-Z]?/g;
+    
+    //-----------------------------------------------------------------------------------    
+    //                                   Execute Parsing
+    //-----------------------------------------------------------------------------------    
+    //---------------------
+    // Del lineComment
+    //---------------------
+    sqlText = sqlText.replace(lineComment1,"");
+    sqlText = sqlText.replace(lineComment2,"");
+    //alert("sqlText="+sqlText);
+    
+    //--------------------------
+    // Del whitespace
+    //--------------------------
+    sqlText = sqlText.replace(whitespace,"");
+    //alert("sqlText="+sqlText);
+    
+    //--------------------------
+    // Del longComment
+    //--------------------------
+    sqlText = sqlText.replace(longComment,"");
+    //alert("sqlText="+sqlText);
+
+    var extTab = "";
+    //--------------------------
+    // ExtTable01
+    //--------------------------
+    var extTab = "";
+    var tab01Array = "";
+    tab01Array = sqlText.match(extTable01);
+    
+    //tab01Array = extTable01.exec(sqlText);
+    //alert("tab01Array="+tab01Array);
+
+    var i, len;
+    if(tab01Array != null) {
+        
+        tab01Array = tab01Array.filter(function (e, i, arr) {
+        return tab01Array.lastIndexOf(e) === i;
+        });
+        
+        tab01Array = tab01Array.sort();
+        
+        for(i=0,len=tab01Array.length;i<len;i++) {
+           //alert("tab01Array[i]="+tab01Array[i]);
+           extTab = extTab + tab01Array[i]+"\n"
+           //alert("extTab="+extTab);
+        }
+    }        
+  
+    document.getElementById("answer").value = extTab;
+    
+}
+</script>
+</head>
+
+<body>
+  <form id="form" name="form" onsubmit="parseCheck();return false;">
+    <textarea id="sql" name="sql" cols=150 rows=20></textarea><br>
+    <input type = "submit" id="id" name="id" value="submit"/><br>
+    <textarea id="answer" name="answer" cols=100 rows=20></textarea>
+  </form>
+</body>
+</html>  
+    
+    
